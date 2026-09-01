@@ -115,12 +115,6 @@ inputs in the same tick Docsify calls it.
   docsify theme is active; the track is neutral translucent gray that works
   on light and dark themes; the number is centered inside the bar (white,
   subtle text-shadow for contrast at 0%).
-  ```html
-  <p class="dpc-progress" role="status" aria-live="polite">
-    <span class="dpc-progress-text">Progress: 3/10</span>
-    [<button type="button" class="dpc-progress-reset">Reset</button>]
-  </p>
-  ```
 - Counted with a "direct items only" DOM walk (`li.task-list-item > label >
   input`, or `> p > input` for loose lists) so nested task lists are not
   double-counted — they carry their own progress node.
@@ -129,7 +123,8 @@ inputs in the same tick Docsify calls it.
 - Reset button: removes the stored keys of its list's direct items, restores
   each input to its Markdown default (`data-dpc-default` baked at transform
   time), updates the progress node. Nested lists are untouched.
-- Text template `{done}`/`{total}` substitution.
+- Text template `{done}`/`{total}` substitution; bar gets a
+  `dpc-progress-complete` class when the list is fully checked.
 
 ## 4. Key algorithms
 

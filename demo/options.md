@@ -35,9 +35,11 @@ import { persistentCheckbox } from 'docsify-plugin-persistent-checkbox';
 
 window.$docsify = {
   plugins: [persistentCheckbox],
-  persistentCheckbox: true,
 };
 ```
+
+The plugin is enabled as soon as it's loaded (script tag **or** manual
+registration); set `persistentCheckbox: false` to disable.
 
 ## All options
 
@@ -85,6 +87,5 @@ onChange({
 })
 ```
 
-## Roadmap
-
-- Cross-tab sync via the `storage` event (planned post-v1, ~15 lines).
+`onPageComplete(ctx)` receives the same context **without** `item`, and fires
+only on the transition to fully-checked (not again on reload).

@@ -73,7 +73,7 @@ scoped per page, with optional progress feedback.
 | `keyStrategy`   | `'hash' \| 'index'`    | `'hash'`  | Item identity strategy |
 | `namespace`     | `string`  | `'docsify-pc'`     | Storage key prefix |
 | `progress`      | `boolean \| object` | `true`  | Theme-colored progress bar per task list, number inside |
-| `progress.text` | `string`  | `'{done}/{total}'` | Text inside the bar |
+| `progressText`  | `string`  | `'{done}/{total}'` | Text inside the bar |
 | `resetButton`   | `boolean` | `true`             | Render an emoji reset button per task list |
 | `resetIcon`     | `string`  | `'🔄'`              | Emoji/character for the reset button |
 | `onChange`      | `(ctx) => void` | —            | Called after any toggle. `ctx = { routePath, done, total, item: {key, text, checked} }` |
