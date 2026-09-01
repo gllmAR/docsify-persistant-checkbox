@@ -1,0 +1,4 @@
+- [Home](/)
+- [Exercises demo](demo/exercises.md)
+- [Stress test](demo/stress.md)
+- [Options & usage](demo/options.md)

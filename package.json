@@ -1,0 +1,53 @@
+{
+  "name": "docsify-plugin-persistent-checkbox",
+  "version": "0.1.0",
+  "description": "Docsify 5 plugin: persistent, per-page checkbox state for task lists (exercises, self-validation, progress tracking)",
+  "license": "MIT",
+  "type": "module",
+  "keywords": [
+    "docsify",
+    "docsify-plugin",
+    "checkbox",
+    "task-list",
+    "progress",
+    "localStorage"
+  ],
+  "main": "dist/docsify-plugin-persistent-checkbox.esm.js",
+  "module": "dist/docsify-plugin-persistent-checkbox.esm.js",
+  "unpkg": "dist/docsify-plugin-persistent-checkbox.min.js",
+  "jsdelivr": "dist/docsify-plugin-persistent-checkbox.min.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./dist/docsify-plugin-persistent-checkbox.esm.js",
+      "default": "./dist/docsify-plugin-persistent-checkbox.min.js"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "docs:serve": "npx -y docsify-cli serve ."
+  },
+  "peerDependencies": {
+    "docsify": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "docsify": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "docsify": "^5.0.0",
+    "esbuild": "^0.25.0",
+    "happy-dom": "^15.0.0",
+    "marked": "^18.0.3",
+    "vitest": "^3.0.0"
+  }
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>docsify-plugin-persistent-checkbox</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@5/themes/vue.css" />
+</head>
+<body>
+  <div id="app">Loading…</div>
+
+  <script>
+    window.$docsify = {
+      name: 'persistent-checkbox demo',
+      repo: 'https://github.com/gllmar/docsify-persistant-checkbox',
+      loadSidebar: true,
+      subMaxLevel: 2,
+      // enable the plugin (object = options, `true` = all defaults):
+      persistentCheckbox: {
+        progress: true,
+        resetButton: true,
+        onChange(ctx) {
+          console.log('[demo] onChange', ctx);
+        },
+        onPageComplete(ctx) {
+          console.log('[demo] page complete!', ctx);
+        },
+      },
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@5"></script>
+  <!-- plugin (auto-registers itself into $docsify.plugins) -->
+  <script src="./dist/docsify-plugin-persistent-checkbox.min.js"></script>
+</body>
+</html>
