@@ -96,11 +96,25 @@ inputs in the same tick Docsify calls it.
   `<namespace>:<routeHash>:__keys__` (JSON array of item keys) — avoids
   full-storage scans.
 
-### 3.4 Progress — `progress.js`
+### 3.4 Progress bar — theme color, number inside
 
-- Per-task-list summary node inserted immediately before each
+- Per-task-list node inserted immediately before each
   `<ul|ol class="task-list">` (lists tagged `data-dpc-list` so the node can
   find its list as `nextElementSibling`):
+  ```html
+  <div class="dpc-progress" data-dpc-progress role="status" aria-live="polite">
+    <div class="dpc-progress-bar" role="progressbar" aria-valuemin="0"
+         aria-valuemax="N" aria-valuenow="D">
+      <div class="dpc-progress-fill" style="width:P%"></div>
+      <span class="dpc-progress-text">D/N</span>
+    </div>
+    [<button class="dpc-progress-reset" aria-label="Reset progress">🔄</button>]
+  </div>
+  ```
+- The **fill** uses `var(--theme-color, #42b983)` so the bar adopts whatever
+  docsify theme is active; the track is neutral translucent gray that works
+  on light and dark themes; the number is centered inside the bar (white,
+  subtle text-shadow for contrast at 0%).
   ```html
   <p class="dpc-progress" role="status" aria-live="polite">
     <span class="dpc-progress-text">Progress: 3/10</span>
@@ -154,12 +168,12 @@ across reloads. (Order-based, so hash strategy is stable under reordering of
 
 ## 6. Build & packaging
 
-- **esbuild**, zero runtime deps.
-- Targets: `dist/docsify-plugin-persistent-checkbox.min.js` (IIFE, sets
-  `window.$docsify` helper? No — UMD export `DocsifyPersistentCheckbox`,
-  auto-registers if `window.$docsify` exists), `dist/*.esm.js`.
-- `package.json`: `exports` map, `files: [dist, src]`, types via JSDoc +
-  `index.d.ts` for options.
+- **No build step.** The product is a single vanilla-JS IIFE,
+  `docsify-plugin-persistent-checkbox.js`, at the repo root — loaded with a
+  plain `<script>` tag (script-tag, jsDelivr/gh, npm all work; `esm.js` is a
+  one-line ESM wrapper; CommonJS guard included).
+- Tests load that exact file (via `window.eval` in happy-dom) so CI covers
+  the artifact users receive.
 - Demo: `docs/` (docsify serve), `index.html` with plugin enabled, 2 pages
   with exercise lists (incl. duplicates + `{#id}` example).
 

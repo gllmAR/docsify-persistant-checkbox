@@ -1,8 +1,10 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fnv1a32 } from '../src/keys.js';
-import { persistentCheckbox } from '../src/index.js';
-import { BASIC, NESTED_AND_DUPES, renderDoc } from './fixtures.js';
+import { loadPlugin, internals } from './load-plugin.js';
+import { BASIC, LOOSE, NESTED_AND_DUPES, renderDoc } from './fixtures.js';
+
+const persistentCheckbox = loadPlugin();
+const { fnv1a32 } = internals();
 
 /**
  * Minimal docsify-like harness:
@@ -150,25 +152,41 @@ describe('plugin lifecycle (docsify-like integration)', () => {
     expect(stable2.checked).toBe(true);
   });
 
-  it('renders and updates per-list progress live', () => {
+  it('renders and updates per-list progress bars live', () => {
     const app = createHarness({ persistentCheckbox: { progress: true } });
     app.mounted();
     app.render(renderDoc(NESTED_AND_DUPES), '/p');
 
     const outerList = app.host.querySelector('ul[data-dpc-list]');
     const nestedList = outerList.querySelector('ul[data-dpc-list]');
-    const outerProgress = outerList.previousElementSibling.querySelector('.dpc-progress-text');
-    const nestedProgress = nestedList.previousElementSibling.querySelector('.dpc-progress-text');
+    const outerBar = outerList.previousElementSibling.querySelector('.dpc-progress-bar');
+    const nestedBar = nestedList.previousElementSibling.querySelector('.dpc-progress-bar');
+    const outerText = () => outerBar.querySelector('.dpc-progress-text').textContent;
+    const nestedText = () => nestedBar.querySelector('.dpc-progress-text').textContent;
 
-    expect(outerProgress.textContent).toBe('Progress: 1/5'); // seeded [x] counts
-    expect(nestedProgress.textContent).toBe('Progress: 0/1');
+    expect(outerText()).toBe('1/5'); // seeded [x] counts
+    expect(nestedText()).toBe('0/1');
+    expect(outerBar.getAttribute('aria-valuenow')).toBe('1');
+    expect(outerBar.querySelector('.dpc-progress-fill').style.width).toBe('20%');
 
     toggle(inputs(app.host).find((i) => i.dataset.dpcKey === 'id:stable-1'));
-    expect(outerProgress.textContent).toBe('Progress: 2/5');
-    expect(nestedProgress.textContent).toBe('Progress: 0/1'); // untouched
+    expect(outerText()).toBe('2/5');
+    expect(nestedText()).toBe('0/1'); // untouched
+    expect(outerBar.querySelector('.dpc-progress-fill').style.width).toBe('40%');
   });
 
-  it('reset button restores Markdown defaults, only for its list', () => {
+  it('marks the bar complete when every item of the list is checked', () => {
+    const app = createHarness({ persistentCheckbox: { progress: true } });
+    app.mounted();
+    app.render(renderDoc(LOOSE), '/complete');
+    const list = app.host.querySelector('[data-dpc-list]');
+    const bar = list.previousElementSibling.querySelector('.dpc-progress-bar');
+    expect(bar.classList.contains('dpc-progress-complete')).toBe(false);
+    for (const i of inputs(app.host)) toggle(i);
+    expect(bar.classList.contains('dpc-progress-complete')).toBe(true);
+  });
+
+  it('reset button (emoji) restores Markdown defaults, only for its list', () => {
     const app = createHarness({ persistentCheckbox: { progress: true, resetButton: true } });
     app.mounted();
     app.render(renderDoc(NESTED_AND_DUPES), '/reset');
@@ -189,17 +207,23 @@ describe('plugin lifecycle (docsify-like integration)', () => {
     expect(seeded.checked).toBe(true); // Markdown default restored
 
     // storage cleared for outer keys only
-    const outerKeys = ['id:stable-1'];
-    for (const k of outerKeys) {
-      expect(Object.keys(window.localStorage).some((key) => key.endsWith(`:${k}`))).toBe(false);
-    }
+    expect(
+      Object.keys(window.localStorage).some((key) => key.endsWith(':id:stable-1')),
+    ).toBe(false);
   });
 
-  it('progressTemplate option is honored', () => {
+  it('progressText option is honored', () => {
     const app = createHarness({ persistentCheckbox: { progress: true, progressText: '{done} of {total} done' } });
     app.mounted();
     app.render(renderDoc(BASIC), '/t');
     expect(app.host.querySelector('.dpc-progress-text').textContent).toBe('1 of 3 done'); // seeded default
+  });
+
+  it('resetIcon option is honored', () => {
+    const app = createHarness({ persistentCheckbox: { progress: true, resetButton: true, resetIcon: '♻️' } });
+    app.mounted();
+    app.render(renderDoc(BASIC), '/icon');
+    expect(app.host.querySelector('.dpc-progress-reset').textContent).toBe('♻️');
   });
 
   it('session storage option', () => {
@@ -265,7 +289,9 @@ describe('plugin lifecycle (docsify-like integration)', () => {
     app.render(renderDoc(BASIC), '/err');
     expect(() => toggle(inputs(app.host)[0])).not.toThrow();
     expect(inputs(app.host)[0].checked).toBe(true);
-    expect(window.localStorage.getItem(`docsify-pc:${fnv1a32('/err')}:${inputs(app.host)[0].dataset.dpcKey}`)).toBe('1');
+    expect(
+      window.localStorage.getItem(`docsify-pc:${fnv1a32('/err')}:${inputs(app.host)[0].dataset.dpcKey}`),
+    ).toBe('1');
     errSpy.mockRestore();
   });
 
@@ -293,10 +319,12 @@ describe('plugin lifecycle (docsify-like integration)', () => {
     expect(app.host.querySelector('[data-dpc-key]')).toBeNull();
   });
 
-  it('progress text is present immediately after doneEach (no flicker)', () => {
+  it('progress bar is filled immediately after doneEach (no flicker)', () => {
     const app = createHarness({ persistentCheckbox: { progress: true } });
     app.mounted();
     app.render(renderDoc(BASIC), '/flicker');
-    expect(app.host.querySelector('.dpc-progress-text').textContent).toBe('Progress: 1/3');
+    expect(app.host.querySelector('.dpc-progress-text').textContent).toBe('1/3');
+    const fill = app.host.querySelector('.dpc-progress-fill');
+    expect(fill.style.width).toBe('33%');
   });
 });

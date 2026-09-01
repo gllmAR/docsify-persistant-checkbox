@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createStore } from '../src/storage.js';
+import { internals } from './load-plugin.js';
+
+const { createStore } = internals();
 
 describe('createStore', () => {
   beforeEach(() => {
@@ -64,7 +66,7 @@ describe('createStore', () => {
     vi.unstubAllGlobals();
   });
 
-  it('uses window.sessionStorage when configured', () => {
+  it('uses sessionStorage when configured', () => {
     const store = createStore({ namespace: 's', storage: 'session' });
     store.setItem('r', 'k', true);
     expect(window.sessionStorage.getItem('s:r:k')).toBe('1');

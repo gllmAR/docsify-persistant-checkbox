@@ -1,7 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
-import { fnv1a32 } from '../src/keys.js';
-import { countForList, directItemInputs, transformTaskLists } from '../src/dom.js';
+import { internals } from './load-plugin.js';
 import {
   BASIC,
   ENTITIES_AND_FORMATTING,
@@ -10,6 +9,8 @@ import {
   ORDERED,
   renderDoc,
 } from './fixtures.js';
+
+const { fnv1a32, transformTaskLists, directItemInputs, countForList } = internals();
 
 function parse(html) {
   const host = document.createElement('div');
@@ -128,18 +129,24 @@ describe('transformTaskLists', () => {
     expect(t.keys).toEqual(['0', '1', '2']);
   });
 
-  it('adds a progress node before each task list when enabled', () => {
+  it('adds a progress bar + emoji reset button before each task list when enabled', () => {
     const t = transformTaskLists(renderDoc(NESTED_AND_DUPES), {
       keyStrategy: 'hash',
       progress: true,
       resetButton: true,
-      resetLabel: 'Réinitialiser',
       stored: {},
     });
     const host = parse(t.html);
     // one per list: outer + nested
     expect(host.querySelectorAll('[data-dpc-progress]')).toHaveLength(2);
-    expect(host.querySelector('.dpc-progress-reset').textContent).toBe('Réinitialiser');
+
+    const bar = host.querySelector('.dpc-progress-bar');
+    expect(bar.getAttribute('role')).toBe('progressbar');
+    expect(bar.querySelector('.dpc-progress-fill')).toBeTruthy();
+
+    const btn = host.querySelector('.dpc-progress-reset');
+    expect(btn.textContent).toBe('🔄');
+    expect(btn.getAttribute('aria-label')).toBe('Reset progress');
   });
 
   it('no progress nodes when disabled', () => {
@@ -172,8 +179,6 @@ describe('DOM counting helpers', () => {
 
     expect(countForList(outer)).toEqual({ done: 2, total: 5 }); // dup + seeded [x] default
     expect(countForList(nested)).toEqual({ done: 1, total: 1 });
-    expect(countForList(nested)).toEqual({ done: 1, total: 1 });
-    void directItemInputs;
   });
 
   it('directItemInputs works for loose lists', () => {

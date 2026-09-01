@@ -2,7 +2,10 @@
 
 Persistent checkbox state for [Docsify 5](https://docsify.js.org) task lists.
 Turn `- [ ]` exercise lists into self-validation progress trackers that survive
-reloads and SPA navigation — zero dependencies, ~4 kB min+gzip.
+reloads and SPA navigation.
+
+**Pure vanilla JS — one file, no build step, zero dependencies**
+(~24 kB source / ~7.5 kB gzipped — generously commented, no minifier needed).
 
 ```markdown
 - [ ] Read the chapter
@@ -10,7 +13,46 @@ reloads and SPA navigation — zero dependencies, ~4 kB min+gzip.
 - [x] Already done in the source
 ```
 
+Each task list gets a **theme-colored progress bar** with the `done/total`
+number inside, plus an optional **🔄 emoji reset button**:
+
+```
+[██████████░░░░░░░░░░]  3/10   🔄
+```
+
 👉 **[Live demo & stress test](https://gllmar.github.io/docsify-persistant-checkbox)** (serve this repo root to try locally: `npm run docs:serve`)
+
+## Install
+
+### From your repo (GitHub Pages) — no build, no npm
+
+The plugin lives in the repo root (`docsify-plugin-persistent-checkbox.js`);
+reference it directly, or hot-link it from GitHub through jsDelivr:
+
+```html
+<script>
+  window.$docsify = {
+    persistentCheckbox: true, // or an options object — see below
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@5"></script>
+<!-- self-hosted: -->
+<script src="./docsify-plugin-persistent-checkbox.js"></script>
+<!-- or via jsDelivr from this repo's main branch: -->
+<script src="https://cdn.jsdelivr.net/gh/gllmar/docsify-persistant-checkbox@main/docsify-plugin-persistent-checkbox.js"></script>
+```
+
+### npm / ESM
+
+```js
+import { persistentCheckbox } from 'docsify-plugin-persistent-checkbox';
+// (tiny wrapper around the same single file)
+
+window.$docsify = {
+  plugins: [persistentCheckbox],
+  persistentCheckbox: true,
+};
+```
 
 ## Features
 
@@ -20,35 +62,13 @@ reloads and SPA navigation — zero dependencies, ~4 kB min+gzip.
   reordering/inserting items never loses progress; duplicate texts get
   independent state; pin a stable ID with an invisible `{#my-id}` marker
 - **Markdown as default** — `[x]` in the source seeds checked; a user's stored
-  choice always wins; Reset restores the Markdown defaults
-- **Per-task-list progress** — `done/total` line per list (nested lists counted
-  separately), accessible (`role="status"`, `aria-live="polite"`)
+  choice always wins; 🔄 restores the Markdown defaults
+- **Theme-colored progress bars** — one per task list (nested lists counted
+  separately), number inside the bar, `role="progressbar"` + `aria-valuenow`,
+  respects your docsify `--theme-color` variable
 - **Callbacks** — `onChange` / `onPageComplete` (fires on completion transition only)
 - **Degrades gracefully** — storage blocked ⇒ session-only checkboxes, one warning
 - Docsify **5.x** (hooks verified against docsify@5.0.0 source), zero dependencies
-
-## Install
-
-```html
-<script>
-  window.$docsify = {
-    persistentCheckbox: true, // or an options object — see below
-  };
-</script>
-<script src="https://cdn.jsdelivr.net/npm/docsify@5"></script>
-<script src="https://cdn.jsdelivr.net/npm/docsify-plugin-persistent-checkbox@1/dist/docsify-plugin-persistent-checkbox.min.js"></script>
-```
-
-ESM:
-
-```js
-import { persistentCheckbox } from 'docsify-plugin-persistent-checkbox';
-
-window.$docsify = {
-  plugins: [persistentCheckbox],
-  persistentCheckbox: true,
-};
-```
 
 ## Options
 
@@ -58,10 +78,10 @@ window.$docsify = {
     storage: 'local',            // 'local' | 'session'
     keyStrategy: 'hash',         // 'hash' | 'index'
     namespace: 'docsify-pc',     // storage key prefix
-    progress: false,             // per-task-list "done/total" line
-    progressText: 'Progress: {done}/{total}',
-    resetButton: false,          // reset button per task list
-    resetLabel: 'Reset',
+    progress: false,             // theme-colored progress bar per task list
+    progressText: '{done}/{total}', // text inside the bar
+    resetButton: false,          // emoji reset button per task list
+    resetIcon: '🔄',              // any emoji/character
     onChange(ctx) {},            // every toggle / reset
     onPageComplete(ctx) {},      // once, when a page becomes fully checked
   },
@@ -84,10 +104,12 @@ window.$docsify = {
 
 ```bash
 npm install
-npm test          # 49 unit + integration tests (real marked + docsify@5 renderers)
-npm run build     # dist/ (IIFE + ESM)
+npm test          # 54 tests — unit, integration, and e2e vs the real docsify@5 dist
 npm run docs:serve
 ```
+
+There is **no build step**: `docsify-plugin-persistent-checkbox.js` in the repo
+root *is* the product. The test suite loads that exact file.
 
 Spec-driven development: see [SPEC.md](SPEC.md) (requirements & decisions),
 [DESIGN.md](DESIGN.md) (technical design), [TASKS.md](TASKS.md) (task board).
@@ -95,7 +117,6 @@ Spec-driven development: see [SPEC.md](SPEC.md) (requirements & decisions),
 ## Roadmap
 
 - Cross-tab sync via the `storage` event (~15 lines, no deps)
-- Optional per-page progress summary
 
 ## License
 

@@ -13,8 +13,8 @@
 </script>
 <!-- 2. docsify -->
 <script src="https://cdn.jsdelivr.net/npm/docsify@5"></script>
-<!-- 3. this plugin (auto-registers into $docsify.plugins) -->
-<script src="https://cdn.jsdelivr.net/npm/docsify-plugin-persistent-checkbox@1/dist/docsify-plugin-persistent-checkbox.min.js"></script>
+<!-- 3. this plugin (vanilla JS, auto-registers into $docsify.plugins) -->
+<script src="./docsify-plugin-persistent-checkbox.js"></script>
 ```
 
 ### npm / ESM
@@ -36,15 +36,24 @@ window.$docsify = {
     storage: 'local',            // 'local' | 'session'
     keyStrategy: 'hash',         // 'hash' | 'index'
     namespace: 'docsify-pc',     // storage key prefix
-    progress: true,              // per-task-list "done/total" line
-    progressText: '{done}/{total} done',
-    resetButton: true,           // reset button per task list
-    resetLabel: 'Reset',
+    progress: true,              // theme-colored progress bar per task list
+    progressText: '{done}/{total}', // text inside the bar
+    resetButton: true,           // emoji reset button per task list
+    resetIcon: '🔄',
     onChange(ctx) {},            // fires on every toggle / reset
     onPageComplete(ctx) {},      // fires once when a page becomes fully checked
   },
 };
 ```
+
+## Progress bar
+
+Each task list gets its own progress bar:
+
+- the **fill** uses the docsify theme color (`var(--theme-color)`, fallback `#42b983`)
+- the **number** sits inside the bar (`{done}/{total}` template, configurable)
+- the bar carries `role="progressbar"` with live `aria-valuenow`/`aria-valuemax`
+- the 🔄 button (configurable emoji) restores the Markdown defaults for that list only
 
 ## Key stability semantics
 

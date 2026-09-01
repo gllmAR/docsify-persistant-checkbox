@@ -72,9 +72,10 @@ scoped per page, with optional progress feedback.
 | `storage`       | `'local' \| 'session'` | `'local'` | Storage backend |
 | `keyStrategy`   | `'hash' \| 'index'`    | `'hash'`  | Item identity strategy |
 | `namespace`     | `string`  | `'docsify-pc'`     | Storage key prefix |
-| `progress`      | `boolean \| object` | `false` | Show `n/m` progress line at top of each page's task lists |
-| `progress.text` | `string`  | `'Progress: {done}/{total}'` | Template |
-| `resetButton`   | `boolean` | `false`            | Render a "Reset" button next to progress |
+| `progress`      | `boolean \| object` | `false` | Theme-colored progress bar per task list, number inside |
+| `progress.text` | `string`  | `'{done}/{total}'` | Text inside the bar |
+| `resetButton`   | `boolean` | `false`            | Render an emoji reset button per task list |
+| `resetIcon`     | `string`  | `'🔄'`              | Emoji/character for the reset button |
 | `onChange`      | `(ctx) => void` | —            | Called after any toggle. `ctx = { routePath, done, total, item: {key, text, checked} }` |
 | `onPageComplete`| `(ctx) => void` | —            | Called once when `done === total` (and only then) |
 
@@ -82,11 +83,15 @@ scoped per page, with optional progress feedback.
   to `true` for defaults).
 
 ### FR6 — Progress display (when `progress` enabled)
-- **One progress summary per task list** (decision §6.1): `n/m` counting the
-  direct items of that list; nested task lists get their own summary.
-- Updates live on every toggle; accessible (`role="status"`, `aria-live="polite"`).
-- If `resetButton` is enabled, a button clears the stored keys of the task
-  list it belongs to (nested lists keep their state).
+- **One progress bar per task list** (decision §6.1): a theme-colored fill
+  (`var(--theme-color)`) in a rounded track, with the `done/total` number
+  rendered **inside** the bar; accessible (`role="progressbar"`,
+  `aria-valuenow`/`aria-valuemax`, wrapped in `role="status" aria-live="polite"`).
+- Nested task lists get their own bar; direct items only are counted.
+- Updates live on every toggle.
+- If `resetButton` is enabled, an **emoji button** (default 🔄, configurable)
+  restores the stored keys of the task list it belongs to (nested lists keep
+  their state).
 
 ### FR7 — Events / callbacks
 - `onChange` fires on every user toggle (after persistence).

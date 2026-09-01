@@ -16,11 +16,12 @@ export interface PersistentCheckboxOptions {
   namespace?: string;
   /** show a per-task-list done/total line */
   progress?: boolean;
-  /** template with {done}/{total} placeholders */
+  /** text inside the progress bar, {done}/{total} placeholders */
   progressText?: string;
-  /** render a reset button per task list */
+  /** render an emoji reset button per task list */
   resetButton?: boolean;
-  resetLabel?: string;
+  /** emoji used on the reset button, default 🔄 */
+  resetIcon?: string;
   /** fires on every toggle / reset */
   onChange?: (ctx: PersistentCheckboxContext) => void;
   /** fires once when a page becomes fully checked (user interaction only) */

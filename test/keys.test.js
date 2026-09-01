@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import {
-  decodeEntities,
-  extractIdMarker,
+import { internals } from './load-plugin.js';
+
+const {
   fnv1a32,
-  makeKeyGen,
-  normalizeItemText,
-  routeHashKey,
+  decodeEntities,
   stripTags,
-} from '../src/keys.js';
+  extractIdMarker,
+  normalizeItemText,
+  makeKeyGen,
+  routeHashKey,
+} = internals();
 
 describe('fnv1a32', () => {
   it('matches known FNV-1a 32-bit vectors', () => {

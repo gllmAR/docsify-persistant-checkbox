@@ -5,7 +5,8 @@
  * lifecycle. XMLHttpRequest is stubbed to serve an in-memory docs site.
  */
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { persistentCheckbox } from '../src/index.js';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 const SITE = {
   '/': `# Home\n\n- [ ] home task one\n- [ ] home task two\n`,
@@ -57,10 +58,15 @@ async function loadDocsify() {
     loadSidebar: true,
     catchPluginErrors: true,
     persistentCheckbox: { progress: true, resetButton: true },
-    plugins: [persistentCheckbox],
   };
   document.body.innerHTML = '<div id="app"></div>';
   vi.stubGlobal('XMLHttpRequest', FakeXHR);
+  // load the real ship file: auto-registers into window.$docsify.plugins
+  const code = readFileSync(
+    resolve(process.cwd(), 'docsify-plugin-persistent-checkbox.js'),
+    'utf8',
+  );
+  window.eval(code);
   await import('docsify/dist/docsify.js');
   loaded = true;
   await new Promise((r) => setTimeout(r, 200));
@@ -86,9 +92,13 @@ describe('e2e: real docsify@5 + plugin', () => {
     }
   });
 
-  it('shows per-list progress from the real render pipeline', () => {
+  it('shows per-list progress bar from the real render pipeline', () => {
     const text = document.querySelector('.dpc-progress-text');
-    expect(text.textContent).toBe('Progress: 0/2');
+    expect(text.textContent).toBe('0/2');
+    const bar = document.querySelector('.dpc-progress-bar');
+    expect(bar.getAttribute('role')).toBe('progressbar');
+    expect(bar.getAttribute('aria-valuemax')).toBe('2');
+    expect(document.querySelector('.dpc-progress-reset').textContent).toBe('🔄');
   });
 
   it('persists a click through the real docsify SPA router', async () => {
