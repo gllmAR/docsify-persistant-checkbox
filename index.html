@@ -16,10 +16,9 @@
       repo: 'https://github.com/gllmar/docsify-persistant-checkbox',
       loadSidebar: true,
       subMaxLevel: 2,
-      // enable the plugin (object = options, `true` = all defaults):
+      // single-line usage works with no config at all; everything below is
+      // optional customization (or `persistentCheckbox: false` to disable):
       persistentCheckbox: {
-        progress: true,
-        resetButton: true,
         onChange(ctx) {
           console.log('[demo] onChange', ctx);
         },
@@ -30,7 +29,7 @@
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@5"></script>
-  <!-- plugin (vanilla JS, no build step; auto-registers into $docsify.plugins) -->
-  <script src="./docsify-plugin-persistent-checkbox.js"></script>
+  <!-- plugin via our GitHub Pages upstream (CDN-like) -->
+  <script src="https://gllmar.github.io/docsify-persistant-checkbox/docsify-plugin-persistent-checkbox.js"></script>
 </body>
 </html>

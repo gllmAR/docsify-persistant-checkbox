@@ -24,22 +24,27 @@ number inside, plus an optional **🔄 emoji reset button**:
 
 ## Install
 
-### From your repo (GitHub Pages) — no build, no npm
+**One line** — the script auto-enables itself with sensible defaults
+(progress bar + 🔄 reset per task list), whatever the script order:
 
-The plugin lives in the repo root (`docsify-plugin-persistent-checkbox.js`);
-reference it directly, or hot-link it from GitHub through jsDelivr:
+```html
+<script src="https://gllmar.github.io/docsify-persistant-checkbox/docsify-plugin-persistent-checkbox.js"></script>
+```
+
+That's it. Customize or disable via the docsify config (before or after the
+plugin line):
 
 ```html
 <script>
   window.$docsify = {
-    persistentCheckbox: true, // or an options object — see below
+    persistentCheckbox: {
+      // any options — see below
+    },
+    // persistentCheckbox: false, // to disable
   };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/docsify@5"></script>
-<!-- self-hosted: -->
-<script src="./docsify-plugin-persistent-checkbox.js"></script>
-<!-- or via jsDelivr from this repo's main branch: -->
-<script src="https://cdn.jsdelivr.net/gh/gllmar/docsify-persistant-checkbox@main/docsify-plugin-persistent-checkbox.js"></script>
+<script src="https://gllmar.github.io/docsify-persistant-checkbox/docsify-plugin-persistent-checkbox.js"></script>
 ```
 
 ### npm / ESM
@@ -70,6 +75,9 @@ window.$docsify = {
 - **Degrades gracefully** — storage blocked ⇒ session-only checkboxes, one warning
 - Docsify **5.x** (hooks verified against docsify@5.0.0 source), zero dependencies
 
+`ctx`: `{ routePath, done, total, item }` where `item` is
+`{ key, checked, label }` (`null` for reset-triggered changes).
+
 ## Options
 
 ```js
@@ -78,9 +86,9 @@ window.$docsify = {
     storage: 'local',            // 'local' | 'session'
     keyStrategy: 'hash',         // 'hash' | 'index'
     namespace: 'docsify-pc',     // storage key prefix
-    progress: false,             // theme-colored progress bar per task list
+    progress: true,              // theme-colored progress bar per task list
     progressText: '{done}/{total}', // text inside the bar
-    resetButton: false,          // emoji reset button per task list
+    resetButton: true,           // emoji reset button per task list
     resetIcon: '🔄',              // any emoji/character
     onChange(ctx) {},            // every toggle / reset
     onPageComplete(ctx) {},      // once, when a page becomes fully checked
@@ -88,8 +96,8 @@ window.$docsify = {
 };
 ```
 
-`ctx`: `{ routePath, done, total, item }` where `item` is
-`{ key, checked, label }` (`null` for reset-triggered changes).
+**Enabled by default** once the script is loaded. The docsify config key is
+purely for customization; set `persistentCheckbox: false` to disable.
 
 ## Key stability semantics
 

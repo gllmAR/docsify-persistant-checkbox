@@ -72,15 +72,18 @@ scoped per page, with optional progress feedback.
 | `storage`       | `'local' \| 'session'` | `'local'` | Storage backend |
 | `keyStrategy`   | `'hash' \| 'index'`    | `'hash'`  | Item identity strategy |
 | `namespace`     | `string`  | `'docsify-pc'`     | Storage key prefix |
-| `progress`      | `boolean \| object` | `false` | Theme-colored progress bar per task list, number inside |
+| `progress`      | `boolean \| object` | `true`  | Theme-colored progress bar per task list, number inside |
 | `progress.text` | `string`  | `'{done}/{total}'` | Text inside the bar |
-| `resetButton`   | `boolean` | `false`            | Render an emoji reset button per task list |
+| `resetButton`   | `boolean` | `true`             | Render an emoji reset button per task list |
 | `resetIcon`     | `string`  | `'🔄'`              | Emoji/character for the reset button |
 | `onChange`      | `(ctx) => void` | —            | Called after any toggle. `ctx = { routePath, done, total, item: {key, text, checked} }` |
 | `onPageComplete`| `(ctx) => void` | —            | Called once when `done === total` (and only then) |
 
-- The whole plugin is **off** unless `persistentCheckbox` is present (or set
-  to `true` for defaults).
+- The plugin is **enabled with defaults as soon as the script is loaded**
+  (single-line install): loading the script IS the opt-in. The config key is
+  optional customization; `persistentCheckbox: false` explicitly disables.
+- Registration must work whatever the script order (before or after the
+  `$docsify` config block and the docsify script).
 
 ### FR6 — Progress display (when `progress` enabled)
 - **One progress bar per task list** (decision §6.1): a theme-colored fill

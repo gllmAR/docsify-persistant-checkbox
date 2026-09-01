@@ -23,9 +23,9 @@
     storage: 'local', // 'local' | 'session'
     keyStrategy: 'hash', // 'hash' | 'index'
     namespace: 'docsify-pc',
-    progress: false, // per-task-list progress bar
+    progress: true, // theme-colored progress bar per task list
     progressText: '{done}/{total}', // text inside the bar
-    resetButton: false, // emoji reset button per task list
+    resetButton: true, // emoji reset button per task list
     resetIcon: '\uD83D\uDD04', // 🔄
     onChange: null, // (ctx) => void
     onPageComplete: null, // (ctx) => void
@@ -536,9 +536,14 @@
    * Plugin entry
    * ------------------------------------------------------------------ */
 
+  /**
+   * Config resolution. Loading the script IS the opt-in: the plugin is
+   * enabled with defaults unless `persistentCheckbox: false` is set.
+   * `true` or an object merges over the defaults.
+   */
   function normalizeConfig(raw) {
-    if (!raw) return null; // disabled unless opted in
-    var opts = raw === true ? {} : raw;
+    if (raw === false || raw === null) return null; // explicit opt-out
+    var opts = raw && typeof raw === 'object' ? raw : {};
     var cfg = {};
     for (var k in DEFAULTS) cfg[k] = DEFAULTS[k];
     for (var k2 in opts) cfg[k2] = opts[k2];
@@ -558,8 +563,10 @@
    * Docsify plugin entry: function(hook, vm).
    */
   function persistentCheckbox(hook, vm) {
-    var cfg = normalizeConfig(vm && vm.config && vm.config.persistentCheckbox);
-    if (!cfg) return; // plugin not enabled in config — stay inert
+    var raw = vm && vm.config && vm.config.persistentCheckbox;
+    // loaded script = opt-in; only an explicit `false` disables
+    var cfg = raw === false || raw === null ? null : normalizeConfig(raw);
+    if (!cfg) return;
 
     var doc = (vm && vm.config && vm.config.el && document) || document;
     var store = createStore({ namespace: cfg.namespace, storage: cfg.storage });
@@ -711,9 +718,28 @@
 
   global.DocsifyPersistentCheckbox = persistentCheckbox;
 
-  // auto-register into an existing docsify config
-  if (global.$docsify) {
-    global.$docsify.plugins = (global.$docsify.plugins || []).concat(persistentCheckbox);
+  /**
+   * Auto-register into the docsify config. Single-line usage:
+   *   <script src=".../docsify-plugin-persistent-checkbox.js"></script>
+   * Works whether this script tag comes before or after the $docsify
+   * config block (docsify only reads plugins at init, on DOM ready).
+   */
+  function register() {
+    if (!global.$docsify) return false;
+    var plugins = global.$docsify.plugins || (global.$docsify.plugins = []);
+    if (plugins.indexOf(persistentCheckbox) === -1) plugins.push(persistentCheckbox);
+    return true;
+  }
+
+  if (!register()) {
+    var doc = global.document;
+    if (doc && doc.addEventListener) {
+      var onReady = function () {
+        doc.removeEventListener('DOMContentLoaded', onReady);
+        register();
+      };
+      doc.addEventListener('DOMContentLoaded', onReady);
+    }
   }
 
   if (typeof module !== 'undefined' && module.exports) {

@@ -4,17 +4,28 @@
 
 ### CDN (recommended)
 
+**One line, zero config** — the plugin auto-enables itself with defaults
+(progress bar + 🔄 reset) whatever the script order:
+
 ```html
-<!-- 1. docsify config -->
+<script src="https://gllmar.github.io/docsify-persistant-checkbox/docsify-plugin-persistent-checkbox.js"></script>
+```
+
+Full example with optional customization:
+
+```html
+<!-- 1. docsify config (optional — customization or `false` to disable) -->
 <script>
   window.$docsify = {
-    persistentCheckbox: true, // defaults, or an options object
+    persistentCheckbox: {
+      // any options, see below
+    },
   };
 </script>
 <!-- 2. docsify -->
 <script src="https://cdn.jsdelivr.net/npm/docsify@5"></script>
-<!-- 3. this plugin (vanilla JS, auto-registers into $docsify.plugins) -->
-<script src="./docsify-plugin-persistent-checkbox.js"></script>
+<!-- 3. this plugin, from our GitHub Pages upstream -->
+<script src="https://gllmar.github.io/docsify-persistant-checkbox/docsify-plugin-persistent-checkbox.js"></script>
 ```
 
 ### npm / ESM

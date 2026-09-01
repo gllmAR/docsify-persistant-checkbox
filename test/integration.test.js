@@ -310,8 +310,19 @@ describe('plugin lifecycle (docsify-like integration)', () => {
     expect(inputs(app2.host)[1].checked).toBe(false);
   });
 
-  it('is inert when persistentCheckbox is not configured', () => {
+  it('is enabled with defaults (progress + reset) when no option is given — single-line usage', () => {
     const app = createHarness({});
+    app.mounted();
+    app.render(renderDoc(BASIC), '/default');
+    const inputs = app.host.querySelectorAll('input[type="checkbox"][disabled]');
+    expect(inputs).toHaveLength(0); // checkboxes enabled without any config
+    expect(app.host.querySelector('[data-dpc-key]')).toBeTruthy();
+    expect(app.host.querySelector('.dpc-progress-bar')).toBeTruthy(); // progress defaults on
+    expect(app.host.querySelector('.dpc-progress-reset')).toBeTruthy(); // reset defaults on
+  });
+
+  it('is inert when persistentCheckbox is explicitly false', () => {
+    const app = createHarness({ persistentCheckbox: false });
     app.mounted();
     app.render(renderDoc(BASIC), '/off');
     const disabled = app.host.querySelectorAll('input[type="checkbox"][disabled]');
