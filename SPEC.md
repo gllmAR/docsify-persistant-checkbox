@@ -136,7 +136,7 @@ All verified by the automated suite (`npx vitest run`, 55 tests) unless noted:
 - [x] `onChange`/`onPageComplete` receive the documented context; throwing handlers contained; `onPageComplete` fires on transition only (integration)
 - [x] Zero dependencies; single vanilla file ~24 kB source / ~8 kB gzip, no build step; ESM wrapper shipped (`esm.js`)
 - [x] Single-line install via GitHub Pages upstream; auto-registration order-independent; enabled by default, `false` disables (e2e script-tag path)
-- [ ] (human, optional) visual click-through of the live demo in a real browser
+- [x] (human, confirmed) visual click-through of the live demo in a real browser — user verified 2025
 
 ## 6. Resolved decisions
 

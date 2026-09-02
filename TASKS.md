@@ -1,6 +1,7 @@
 # TASKS — docsify-plugin-persistent-checkbox
 
 > Ordered; each task is independently verifiable. Check off as completed.
+> **Status: COMPLETE — v0.3.0 accepted & tagged.** Future work tracked in README roadmap.
 
 ## Phase 0 — Scaffold ✅
 - [x] T0.1 `package.json` (type module, exports map, scripts: test/docs:serve)
@@ -40,4 +41,4 @@
   live GitHub Pages upstream)
 - [x] T5.2 Size check: ~24 kB source / ~8 kB gzip single file ✅; zero runtime deps, zero build
 - [x] T5.3 LICENSE, docs consistent, version `0.3.0`
-- [ ] (optional, human) one visual click-through of the demo in a real browser
+- [x] (human) one visual click-through of the demo in a real browser — **confirmed working by user**
