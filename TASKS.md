@@ -31,7 +31,7 @@
 ## Phase 4 — Demo & docs ✅
 - [x] T4.1 Demo site at repo root (GitHub Pages ready): `index.html`, `.nojekyll`, `_sidebar.md`, `demo/exercises.md`, `demo/stress.md` (25-item lists, nesting, loose lists, `<details>`, ordered lists, entities, unicode, code fences), `demo/options.md`
 - [x] T4.2 `README.md`: install (CDN + npm), options table, key-stability semantics, compat note (docsify@^5)
-- [x] T4.3 `index.d.ts` for options + plugin registration
+- [x] T4.3 ~~`index.d.ts`~~ removed — vanilla-JS project, no TS consumers; options documented in README/demo
 
 ## Phase 5 — Release readiness
 - [ ] T5.1 Manual acceptance checklist run (SPEC §5) against `npm run docs:serve` in a real browser

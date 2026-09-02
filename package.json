@@ -16,10 +16,8 @@
   "module": "esm.js",
   "unpkg": "docsify-plugin-persistent-checkbox.js",
   "jsdelivr": "docsify-plugin-persistent-checkbox.js",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
       "import": "./esm.js",
       "default": "./docsify-plugin-persistent-checkbox.js"
     },
@@ -28,21 +26,12 @@
   },
   "files": [
     "docsify-plugin-persistent-checkbox.js",
-    "esm.js",
-    "index.d.ts"
+    "esm.js"
   ],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
     "docs:serve": "npx -y docsify-cli serve ."
-  },
-  "peerDependencies": {
-    "docsify": "^5.0.0"
-  },
-  "peerDependenciesMeta": {
-    "docsify": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "docsify": "^5.0.0",

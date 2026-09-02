@@ -569,7 +569,7 @@
     var cfg = raw === false || raw === null ? null : normalizeConfig(raw);
     if (!cfg) return;
 
-    var doc = (vm && vm.config && vm.config.el && document) || document;
+    var doc = document;
     var store = createStore({ namespace: cfg.namespace, storage: cfg.storage });
     var routeHash = routeHashKey(vm && vm.route && vm.route.path);
     var routeState = {};
