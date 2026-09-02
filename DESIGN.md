@@ -103,12 +103,12 @@ inputs in the same tick Docsify calls it.
   find its list as `nextElementSibling`):
   ```html
   <div class="dpc-progress" data-dpc-progress role="status" aria-live="polite">
+    <button class="dpc-progress-reset" aria-label="Reset progress">🔄</button>
     <div class="dpc-progress-bar" role="progressbar" aria-valuemin="0"
          aria-valuemax="N" aria-valuenow="D">
       <div class="dpc-progress-fill" style="width:P%"></div>
       <span class="dpc-progress-text">D/N</span>
     </div>
-    [<button class="dpc-progress-reset" aria-label="Reset progress">🔄</button>]
   </div>
   ```
 - The **fill** uses `var(--theme-color, #42b983)` so the bar adopts whatever

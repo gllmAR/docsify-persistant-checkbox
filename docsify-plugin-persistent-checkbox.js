@@ -395,14 +395,15 @@
         escapeHtml(resetIcon) +
         '</button>'
       : '';
+    // emoji sits LEFT of the progress bar
     return (
       '<div class="dpc-progress" data-dpc-progress role="status" aria-live="polite">' +
+      btn +
       '<div class="dpc-progress-bar" role="progressbar" aria-valuemin="0" ' +
       'aria-valuemax="0" aria-valuenow="0">' +
       '<div class="dpc-progress-fill" style="width:0%"></div>' +
       '<span class="dpc-progress-text"></span>' +
       '</div>' +
-      btn +
       '</div>'
     );
   }

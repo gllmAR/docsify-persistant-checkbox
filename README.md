@@ -8,7 +8,7 @@ reloads and SPA navigation.
 source / ~7.5 kB gzipped).
 
 ```
-[██████████░░░░░░░░░░]  3/10   🔄
+🔄  [██████████░░░░░░░░░░]  3/10
 ```
 
 👉 **[Live demo & stress test](https://gllmar.github.io/docsify-persistant-checkbox)**

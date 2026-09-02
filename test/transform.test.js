@@ -147,6 +147,8 @@ describe('transformTaskLists', () => {
     const btn = host.querySelector('.dpc-progress-reset');
     expect(btn.textContent).toBe('🔄');
     expect(btn.getAttribute('aria-label')).toBe('Reset progress');
+    // emoji sits LEFT of the bar
+    expect(btn.nextElementSibling.classList.contains('dpc-progress-bar')).toBe(true);
   });
 
   it('no progress nodes when disabled', () => {

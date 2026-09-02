@@ -66,7 +66,8 @@ Each task list gets its own progress bar:
 - the **fill** uses the docsify theme color (`var(--theme-color)`, fallback `#42b983`)
 - the **number** sits inside the bar (`{done}/{total}` template, configurable)
 - the bar carries `role="progressbar"` with live `aria-valuenow`/`aria-valuemax`
-- the 🔄 button (configurable emoji) restores the Markdown defaults for that list only
+- the 🔄 button (configurable emoji) sits **left of the bar** and restores the
+  Markdown defaults for that list only
 
 ## Key stability semantics
 
