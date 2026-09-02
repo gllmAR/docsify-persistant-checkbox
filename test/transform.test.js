@@ -162,6 +162,66 @@ describe('transformTaskLists', () => {
     expect(t.html).toBe(html);
     expect(t.count).toBe(0);
   });
+
+  describe('per-list opt-out (<!-- dpc:off -->)', () => {
+    const MIXED =
+      '<!-- dpc:off -->\n\n- [ ] ignored one\n- [ ] ignored two\n\n' +
+      'A paragraph separates the two lists.\n\n' +
+      '- [ ] active one\n- [x] active two\n';
+
+    it('keeps the marked list exactly as docsify rendered it', () => {
+      const t = transformTaskLists(renderDoc(MIXED), {
+        keyStrategy: 'hash',
+        progress: true,
+        resetButton: true,
+        stored: {},
+      });
+      const host = parse(t.html);
+      // only the active list is transformed
+      expect(inputsOf(host)).toHaveLength(2);
+      expect(t.count).toBe(2);
+      // ignored list keeps disabled inputs, no keys, no progress bar
+      const disabled = host.querySelectorAll('input[type="checkbox"][disabled]');
+      expect(disabled).toHaveLength(2);
+      expect(t.keys).not.toContain(fnv1a32('ignored one'));
+      // exactly one progress node (for the active list)
+      expect(host.querySelectorAll('[data-dpc-progress]')).toHaveLength(1);
+    });
+
+    it('strips the marker from the output (content untouched)', () => {
+      const t = transformTaskLists(renderDoc(MIXED), { keyStrategy: 'hash', stored: {} });
+      expect(t.html).not.toContain('dpc:off');
+      expect(t.html).not.toContain('<!--');
+    });
+
+    it('ignores nested lists of a marked outer list', () => {
+      const md = '<!-- dpc:ignore -->\n\n' + NESTED_AND_DUPES;
+      const t = transformTaskLists(renderDoc(md), { keyStrategy: 'hash', progress: true, stored: {} });
+      expect(t.count).toBe(0);
+      expect(t.html).not.toContain('data-dpc-key');
+      expect(t.html).not.toContain('data-dpc-progress');
+    });
+
+    it('item-level: inline marker disables just that item', () => {
+      const md = '- [ ] kept\n- [ ] skipped <!-- dpc:off -->\n- [ ] kept too\n';
+      const t = transformTaskLists(renderDoc(md), { keyStrategy: 'hash', progress: true, stored: {} });
+      expect(t.count).toBe(2);
+      expect(t.keys).not.toContain(fnv1a32('skipped'));
+      expect(t.keys).toContain(fnv1a32('kept'));
+      const host = parse(t.html);
+      expect(inputsOf(host)).toHaveLength(2);
+      expect(host.querySelectorAll('input[type="checkbox"][disabled]')).toHaveLength(1);
+      expect(t.html).not.toContain('dpc:off');
+      // skipped item's text content preserved
+      expect(t.html).toContain('skipped');
+    });
+
+    it('strips stray markers with no list after them', () => {
+      const html = '<p>before</p><!-- dpc:off --><p>after</p>';
+      const t = transformTaskLists(html, { keyStrategy: 'hash', stored: {} });
+      expect(t.html).toBe('<p>before</p><p>after</p>');
+    });
+  });
 });
 
 describe('DOM counting helpers', () => {

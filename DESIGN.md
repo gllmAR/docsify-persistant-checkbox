@@ -142,6 +142,12 @@ inputs in the same tick Docsify calls it.
   only `onPageComplete`); local state mirror (`routeState`) is updated so a
   subsequent re-render doesn't clobber the synced value.
 
+- Per-list opt-out via `<!-- dpc:off -->` markers (see FR11): ranges are
+  computed pre-transform with the same balanced list scan; the ITEM_RE pass
+  skips matches inside them; markers are stripped last so the content is
+  untouched. Item-level: a marker inside the captured text fragment disables
+  just that item.
+
 ## 4. Key algorithms
 
 ### FNV-1a 32-bit (no deps, fast, adequate distribution)

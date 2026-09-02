@@ -1,5 +1,5 @@
 /*!
- * docsify-plugin-persistent-checkbox v1.0.0
+ * docsify-plugin-persistent-checkbox v1.1.0
  * Persistent, per-page checkbox state for Docsify 5 task lists.
  * Exercises, self-validation, progress tracking.
  *
@@ -276,7 +276,66 @@
     /(<li(?: class="task-list-item")?>(?:<label>)?(?:<p>)?<input)([^>]*type="checkbox"[^>]*)>(\s*)((?:(?!<\/?label|<\/?li[ >]|<\/?p[ >]|<[uo]l[ >])[\s\S])*)/g;
 
   var MARKER_IN_HTML_RE = /\s*\{#([A-Za-z0-9_-]+)\}\s*/;
+
+  // per-list opt-out marker: <!-- dpc:off --> (or dpc:ignore). Placed
+  // before a task list it disables the whole list (nested included); placed
+  // inline at the end of an item's text it disables just that item.
+  var OPT_OUT_RE = /<!--\s*dpc:(?:off|ignore)\s*-->/gi;
+  var OPT_OUT_TEST_RE = /<!--\s*dpc:(?:off|ignore)\s*-->/i;
+  var OPT_OUT_ITEM_STRIP_RE = /\s*<!--\s*dpc:(?:off|ignore)\s*-->/i;
+  var OPT_OUT_STRIP_RE = /<!--\s*dpc:(?:off|ignore)\s*-->\s*/gi;
+
+  /** Close-tag matcher for ul/ol (nesting-aware scan helper). */
   var TAG_SCAN_RE = /<(\/?)(ul|ol)([^>]*)>/g;
+
+  /**
+   * Find the end index of the list opening at `openIndex` (html[openIndex]
+   * is the '<' of an open ul/ol tag). Nesting-aware; -1 if unterminated.
+   */
+  function findListClose(html, openIndex, tag) {
+    TAG_SCAN_RE.lastIndex = openIndex;
+    var depths = 0;
+    var t;
+    while ((t = TAG_SCAN_RE.exec(html))) {
+      if (t[1]) {
+        if (t[2] === tag) {
+          depths--;
+          if (depths === 0) return TAG_SCAN_RE.lastIndex;
+        }
+      } else if (t[2] === tag) {
+        depths++;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Ranges of HTML that must stay untouched: each `<!-- dpc:off -->` marker
+   * disables the task list that follows it (nested lists included). The
+   * marker is invisible in the rendered page and stripped from the output.
+   */
+  function collectIgnoredRanges(html) {
+    var ranges = [];
+    OPT_OUT_RE.lastIndex = 0;
+    var m;
+    while ((m = OPT_OUT_RE.exec(html))) {
+      var start = m.index;
+      var after = m.index + m[0].length;
+      var ws = /^\s*/.exec(html.slice(after))[0].length;
+      var openAt = after + ws;
+      var openTag = /^<(ul|ol)([^>]*)>/.exec(html.slice(openAt));
+      var end;
+      if (openTag) {
+        var closeEnd = findListClose(html, openAt, openTag[1]);
+        end = closeEnd === -1 ? html.length : closeEnd;
+      } else {
+        end = after; // stray marker (no list follows): just strip it
+      }
+      ranges.push({ start: start, end: end });
+      OPT_OUT_RE.lastIndex = end; // do not rescan inside the ignored block
+    }
+    return ranges;
+  }
 
   function escapeHtml(str) {
     return String(str).replace(/[&<>"]/g, function (c) {
@@ -303,10 +362,19 @@
     var keyGen = makeKeyGen(keyStrategy);
     var keys = [];
     var count = 0;
+    var ignored = collectIgnoredRanges(html);
 
     var out = html.replace(
       ITEM_RE,
-      function (match, inputOpen, attrs, gap, textFragment) {
+      function (match, inputOpen, attrs, gap, textFragment, offset) {
+        // per-list opt-out: leave this item exactly as docsify rendered it
+        for (var r = 0; r < ignored.length; r++) {
+          if (offset >= ignored[r].start && offset < ignored[r].end) return match;
+        }
+        // per-item opt-out: marker inside the item text
+        if (OPT_OUT_TEST_RE.test(textFragment)) {
+          return match.replace(OPT_OUT_ITEM_STRIP_RE, '');
+        }
         count++;
         var sourceChecked = attrs.indexOf('checked') !== -1;
 
@@ -343,6 +411,11 @@
         resetButton: resetButton,
         resetIcon: resetIcon,
       });
+    }
+
+    // strip opt-out markers — they must not interfere with the content
+    if (ignored.length > 0) {
+      out = out.replace(OPT_OUT_STRIP_RE, '');
     }
 
     return { html: out, count: count, keys: keys };
@@ -746,7 +819,7 @@
    * ------------------------------------------------------------------ */
 
   persistentCheckbox.normalizeConfig = normalizeConfig;
-  persistentCheckbox.version = '1.0.0';
+  persistentCheckbox.version = '1.1.0';
   persistentCheckbox._internals = {
     // keys
     fnv1a32: fnv1a32,

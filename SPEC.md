@@ -116,6 +116,16 @@ scoped per page, with optional progress feedback.
 - The handler never writes back to storage — no echo loops.
 - Listener is a replaced singleton (re-init safe), like the other delegates.
 
+### FR11 — Per-list / per-item opt-out (v1.1)
+- Marker `<!-- dpc:off -->` (alias `dpc:ignore`), invisible in rendered pages:
+  - **before a task list** → that list (and nested lists) keeps docsify's
+    native rendering: inputs stay disabled, no keys, no progress bar, no
+    persistence, no reset
+  - **inline at the end of an item's text** → only that item is left untouched
+- Markers are stripped from the output HTML (content untouched).
+- Global opt-out remains `persistentCheckbox: false`; code fences were never
+  touched.
+
 ### FR8 — Resilience
 - Storage unavailable (Safari private mode, disabled cookies): plugin must
   degrade to plain interactive checkboxes (session-only state), no crashes,

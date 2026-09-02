@@ -59,6 +59,20 @@ window.$docsify = {
 };
 ```
 
+## Opt out per list / per item
+
+```markdown
+<!-- dpc:off -->
+
+- [ ] whole list opted out (stays disabled, no bar, no persistence)
+
+- [ ] persistent item
+- [ ] opted-out item <!-- dpc:off -->
+```
+
+The comment is invisible on the page and stripped from the output HTML.
+`dpc:ignore` is an alias.
+
 ## Progress bar
 
 Each task list gets its own progress bar:

@@ -86,6 +86,26 @@ All optional, via `window.$docsify.persistentCheckbox`:
 `ctx` = `{ routePath, done, total, item }` with
 `item = { key, checked, label }` (`null` when triggered by reset).
 
+## Opting out per list or per item
+
+Add an invisible HTML comment in the Markdown — it never shows on the page
+and the plugin strips it from the output:
+
+```markdown
+<!-- dpc:off -->
+
+- [ ] this whole list stays a plain, disabled docsify checklist
+- [ ] no progress bar, no persistence, nested lists included
+
+- [ ] this list is persistent again (separated by any other content)
+- [ ] persistent — but this specific item is opted out <!-- dpc:off -->
+```
+
+- marker **before a list** → the whole list (nested lists included) is left
+  exactly as docsify renders it
+- marker **at the end of an item's text** → only that item is left untouched
+- `dpc:ignore` works as an alias; markers are removed from the rendered HTML
+
 ## Key stability semantics
 
 | Markdown edit | User state |
