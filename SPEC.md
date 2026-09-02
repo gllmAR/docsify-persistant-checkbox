@@ -97,12 +97,24 @@ scoped per page, with optional progress feedback.
   their state).
 
 ### FR7 — Events / callbacks
-- `onChange` fires on every user toggle (after persistence).
+- `onChange` fires on every user toggle (after persistence) **and in
+  receiving tabs on cross-tab updates**.
 - `onPageComplete` fires on the transition to fully-complete only,
-  **triggered by user interaction** (not re-fired on subsequent loads of an
-  already-complete page).
+  **triggered by user interaction or cross-tab update** (not re-fired on
+  subsequent loads of an already-complete page).
 - Callbacks must never break rendering when they throw (wrapped in try/catch,
   errors logged via `console.error` with a `[persistent-checkbox]` prefix).
+
+### FR10 — Cross-tab sync (v1.0)
+- `storage` events (which fire only in *other* tabs) are listened to at the
+  window level; keys outside the namespace, other routes, and the route-index
+  key are ignored.
+- A changed item patches the matching checkbox (`data-dpc-key` lookup),
+  updates the progress bar, and refreshes the local state mirror.
+- `newValue === null` (item removed = reset in another tab) restores the
+  Markdown default (`data-dpc-default`).
+- The handler never writes back to storage — no echo loops.
+- Listener is a replaced singleton (re-init safe), like the other delegates.
 
 ### FR8 — Resilience
 - Storage unavailable (Safari private mode, disabled cookies): plugin must

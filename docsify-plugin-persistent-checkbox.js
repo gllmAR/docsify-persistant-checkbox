@@ -1,5 +1,5 @@
 /*!
- * docsify-plugin-persistent-checkbox v0.3.0
+ * docsify-plugin-persistent-checkbox v1.0.0
  * Persistent, per-page checkbox state for Docsify 5 task lists.
  * Exercises, self-validation, progress tracking.
  *
@@ -176,6 +176,19 @@
     return {
       get available() {
         return !unavailable;
+      },
+
+      /**
+       * Parse one of our storage keys: '<ns>:<routeHash>:<itemKey>'.
+       * Returns null for foreign keys; itemKey may itself contain ':'
+       * (e.g. 'id:stable-1').
+       */
+      parseKey: function (key) {
+        if (typeof key !== 'string' || key.indexOf(ns + ':') !== 0) return null;
+        var rest = key.slice(ns.length + 1);
+        var i = rest.indexOf(':');
+        if (i === -1) return null;
+        return { routeHash: rest.slice(0, i), itemKey: rest.slice(i + 1) };
       },
 
       /** @returns {Object<string, boolean>} itemKey -> checked */
@@ -604,6 +617,7 @@
 
       if (delegated.change) document.removeEventListener('change', delegated.change);
       if (delegated.click) document.removeEventListener('click', delegated.click);
+      if (delegated.storage) window.removeEventListener('storage', delegated.storage);
 
       delegated.change = function (event) {
         var input = event.target;
@@ -651,6 +665,47 @@
 
       document.addEventListener('change', delegated.change);
       document.addEventListener('click', delegated.click);
+
+      /*
+       * Cross-tab sync: 'storage' events fire only in OTHER tabs, so this
+       * handler never echoes the tab that made the change. We patch the DOM
+       * and update mirrors WITHOUT writing back to storage — no loops.
+       */
+      delegated.storage = function (event) {
+        if (!store.available || !event.key) return;
+        var parsed = store.parseKey(event.key);
+        if (!parsed || parsed.routeHash !== routeHash) return; // foreign or other page
+        if (parsed.itemKey === '__keys__') return; // route index, not an item
+
+        var key = parsed.itemKey;
+        if (event.newValue === null) {
+          // another tab cleared the item (reset): restore Markdown default
+          delete routeState[key];
+        } else {
+          routeState[key] = event.newValue === '1';
+        }
+
+        var input = document.querySelector('input[data-dpc-key="' + key + '"]');
+        if (!input) return; // item not on the currently rendered page
+
+        input.checked =
+          event.newValue === null
+            ? input.hasAttribute('data-dpc-default')
+            : event.newValue === '1';
+
+        var list = input.closest('[data-dpc-list]');
+        if (list) updateProgressForList(list, cfg.progressText);
+
+        var ctx = pageContext();
+        safeCall(cfg.onChange, mixin(ctx, { item: itemContext(input) }));
+
+        var isComplete = ctx.total > 0 && ctx.done === ctx.total;
+        var wasComplete = completeMemo[routeHash] === true;
+        if (isComplete && !wasComplete) safeCall(cfg.onPageComplete, ctx);
+        completeMemo[routeHash] = isComplete;
+      };
+
+      window.addEventListener('storage', delegated.storage);
     });
 
     hook.doneEach(function () {
@@ -691,7 +746,7 @@
    * ------------------------------------------------------------------ */
 
   persistentCheckbox.normalizeConfig = normalizeConfig;
-  persistentCheckbox.version = '0.3.0';
+  persistentCheckbox.version = '1.0.0';
   persistentCheckbox._internals = {
     // keys
     fnv1a32: fnv1a32,

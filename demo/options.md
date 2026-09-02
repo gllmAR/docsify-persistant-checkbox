@@ -69,6 +69,17 @@ Each task list gets its own progress bar:
 - the 🔄 button (configurable emoji) sits **left of the bar** and restores the
   Markdown defaults for that list only
 
+### Cross-tab sync
+
+State syncs live across browser tabs of the same page (via the `storage`
+event — no polling, no dependencies):
+
+- checking/unchecking in one tab updates the checkbox and progress bar in the
+  other tabs instantly
+- a 🔄 reset in one tab restores the Markdown defaults in the other tabs
+- the receiving tab also fires `onChange` / transition-only `onPageComplete`
+- the handler never writes back to storage — no echo loops
+
 ## Key stability semantics
 
 - Default strategy `hash`: an item's identity is the **hash of its visible text**.

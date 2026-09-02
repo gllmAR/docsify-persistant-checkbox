@@ -1,63 +1,10 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { loadPlugin, internals } from './load-plugin.js';
 import { BASIC, LOOSE, NESTED_AND_DUPES, renderDoc } from './fixtures.js';
+import { createHarness, inputs, toggle } from './harness.js';
+import { internals } from './load-plugin.js';
 
-const persistentCheckbox = loadPlugin();
 const { fnv1a32 } = internals();
-
-/**
- * Minimal docsify-like harness:
- *  - a fake hook registrar capturing afterEach/mounted/doneEach
- *  - a fake vm with config + route
- *  - simulates a route render: afterEach(html) -> innerHTML -> doneEach()
- */
-function createHarness(config) {
-  const host = document.createElement('main');
-  document.body.innerHTML = '';
-  document.body.appendChild(host);
-
-  const hooks = { afterEach: [], mounted: [], doneEach: [] };
-  const hook = {
-    afterEach: (fn) => hooks.afterEach.push(fn),
-    mounted: (fn) => hooks.mounted.push(fn),
-    doneEach: (fn) => hooks.doneEach.push(fn),
-  };
-  const vm = {
-    config,
-    route: { path: '/' },
-  };
-  persistentCheckbox(hook, vm);
-
-  let rendered = null;
-  return {
-    vm,
-    host,
-    /** render a markdown source at a route */
-    render(markdown, path) {
-      if (path !== undefined) vm.route.path = path;
-      let html = markdown;
-      for (const fn of hooks.afterEach) html = fn(html) ?? html;
-      host.innerHTML = html;
-      for (const fn of hooks.doneEach) fn();
-      rendered = html;
-      return host;
-    },
-    mounted() {
-      for (const fn of hooks.mounted) fn();
-    },
-    get rendered() {
-      return rendered;
-    },
-  };
-}
-
-const inputs = (host) => [...host.querySelectorAll('input[data-dpc-key]')];
-
-function toggle(input) {
-  input.checked = !input.checked;
-  input.dispatchEvent(new Event('change', { bubbles: true }));
-}
 
 beforeEach(() => {
   window.localStorage.clear();

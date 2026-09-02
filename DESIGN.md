@@ -126,6 +126,22 @@ inputs in the same tick Docsify calls it.
 - Text template `{done}`/`{total}` substitution; bar gets a
   `dpc-progress-complete` class when the list is fully checked.
 
+## 3.5 Cross-tab sync — `storage` events (v1.0)
+
+- `storage` events fire **only in tabs other than the writer** — the plugin
+  listens on `window` and patches the DOM directly, **without writing back**
+  (echo-loop-free by construction).
+- Key routing: `store.parseKey(key)` → `{routeHash, itemKey}`; foreign keys,
+  other routes, and the `__keys__` index are skipped.
+- Item lookup: `document.querySelector('input[data-dpc-key="…"]')` (keys are
+  hex/`#n`/`id:…` — safe inside a quoted attribute selector); missing items
+  no-op.
+- Semantics: `newValue '1'/'0'` → check/uncheck; `null` (removed = reset in
+  the other tab) → restore Markdown default via `data-dpc-default`.
+- Callbacks fire in receiving tabs like local interaction (incl. transition-
+  only `onPageComplete`); local state mirror (`routeState`) is updated so a
+  subsequent re-render doesn't clobber the synced value.
+
 ## 4. Key algorithms
 
 ### FNV-1a 32-bit (no deps, fast, adequate distribution)

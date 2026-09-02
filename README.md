@@ -52,9 +52,20 @@ npm/ESM: `import { persistentCheckbox } from 'docsify-plugin-persistent-checkbox
   `role="progressbar"` + live `aria-valuenow`/`aria-valuemax`
 - **Callbacks** — `onChange` on every toggle/reset, `onPageComplete` on the
   transition to fully-checked (not re-fired on reload)
+- **Cross-tab sync** — check a box in one tab, other tabs of the same page update live (via the `storage` event, no polling, no echo loops)
 - **Degrades gracefully** — storage blocked ⇒ session-only checkboxes, one warning
 
-Requires Docsify 5.x (hooks verified against docsify@5.0.0).
+Requires Docsify 5.x (hooks verified against docsify@5.0.0). **v1.x is a
+stability guarantee: the option surface and `{#id}` marker syntax are frozen.**
+
+## Pin a version
+
+The unversioned URL always serves the latest `main` (cached up to a few
+minutes). For cache-immune stability, pin via jsDelivr + tag:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/gllmar/docsify-persistant-checkbox@v1.0.0/docsify-plugin-persistent-checkbox.js"></script>
+```
 
 ## Options
 
@@ -98,7 +109,7 @@ See [SPEC.md](SPEC.md), [DESIGN.md](DESIGN.md), [TASKS.md](TASKS.md).
 
 ## Roadmap
 
-- Cross-tab sync via the `storage` event (~15 lines, no deps)
+Nothing planned — 1.x focuses on stability. Ideas welcome via issues.
 
 ## License
 

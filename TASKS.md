@@ -42,3 +42,12 @@
 - [x] T5.2 Size check: ~24 kB source / ~8 kB gzip single file ✅; zero runtime deps, zero build
 - [x] T5.3 LICENSE, docs consistent, version `0.3.0`
 - [x] (human) one visual click-through of the demo in a real browser — **confirmed working by user**
+
+## Phase 6 — v1.0.0: cross-tab sync & API freeze ✅
+- [x] T6.1 `store.parseKey()` — namespace-scoped key → `{routeHash, itemKey}`
+- [x] T6.2 `storage` listener (replaced singleton, re-init safe): patch checkbox + progress + mirror, **never** write back
+- [x] T6.3 Semantics: `'1'/'0'` → check/uncheck; `null` (other-tab reset) → Markdown default; foreign keys/other routes/`__keys__` ignored
+- [x] T6.4 Callbacks fire in receiving tabs (transition-only `onPageComplete`)
+- [x] T6.5 8 sync tests (63 total passing); shared test harness extracted (`test/harness.js`)
+- [x] T6.6 Docs: README features/pinning/roadmap, `demo/options.md`, SPEC FR10, DESIGN §3.5
+- [x] T6.7 Version 1.0.0 — API surface frozen (options, `{#id}` syntax, `data-dpc-*` attributes), tagged `v1.0.0`
