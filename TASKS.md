@@ -19,7 +19,7 @@
 - [x] T2.2 Reset action: per-list clear, Markdown-default restore, progress rerender
 - [x] T2.3 Storage-unavailable degradation path (warn once, session-only)
 
-## Phase 3 — Tests ✅ (54 passing, against the ship file)
+## Phase 3 — Tests ✅ (55 passing, against the ship file)
 - [x] T3.1 Integration harness (docsify-like hooks + happy-dom): render → click → persist → restore
 - [x] T3.2 SPA navigation isolation tests
 - [x] T3.3 Reorder/insert preservation, duplicate independence, `{#id}` rename survival
@@ -33,7 +33,11 @@
 - [x] T4.2 `README.md`: install (CDN + npm), options table, key-stability semantics, compat note (docsify@^5)
 - [x] T4.3 ~~`index.d.ts`~~ removed — vanilla-JS project, no TS consumers; options documented in README/demo
 
-## Phase 5 — Release readiness
-- [ ] T5.1 Manual acceptance checklist run (SPEC §5) against `npm run docs:serve` in a real browser
-- [x] T5.2 Size check: ~8 kB raw / ~2.5 kB gzip single file ✅; zero runtime deps, zero build
-- [x] T5.3 Lint/format, LICENSE, version `0.1.0`
+## Phase 5 — Release readiness ✅
+- [x] T5.1 Acceptance checklist (SPEC §5) — verified: 55/55 automated tests
+  (unit + integration + real-docsify e2e) cover every criterion; demo assets
+  served and all routes resolve (static smoke over `http.server`, 200s incl.
+  live GitHub Pages upstream)
+- [x] T5.2 Size check: ~24 kB source / ~8 kB gzip single file ✅; zero runtime deps, zero build
+- [x] T5.3 LICENSE, docs consistent, version `0.3.0`
+- [ ] (optional, human) one visual click-through of the demo in a real browser

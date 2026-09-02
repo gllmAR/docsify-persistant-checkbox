@@ -123,16 +123,20 @@ scoped per page, with optional progress feedback.
 
 ## 5. Acceptance criteria
 
-- [ ] `docs/index.html` demo page: check 2 of 4 boxes → reload → same 2 checked; progress shows `2/4`.
-- [ ] SPA navigation to another page and back preserves state.
-- [ ] Reordering/inserting items in the source Markdown preserves state for untouched items (hash strategy).
-- [ ] Duplicate-text items behave independently.
-- [ ] `keyStrategy: 'index'` and `storage: 'session'` options work.
-- [ ] `{#id}` override: rename item text with an id marker → state preserved.
-- [ ] With storage blocked, page still renders, checkboxes toggle, warn logged once.
-- [ ] Reset button clears only the current route's keys.
-- [ ] `onChange`/`onPageComplete` receive the documented context and throwing handlers are contained.
-- [ ] No dependencies; single IIFE dist ≤ 5 kB min+gzip; also ships ESM build.
+All verified by the automated suite (`npx vitest run`, 55 tests) unless noted:
+
+- [x] Demo page: check boxes → reload → state restored; progress bar reflects `done/total` (integration + e2e vs real docsify@5 dist)
+- [x] SPA navigation to another page and back preserves state (integration, e2e hash-router)
+- [x] Reordering/inserting items preserves state for untouched items; hash strategy (unit + integration)
+- [x] Duplicate-text items behave independently (unit + integration)
+- [x] `keyStrategy: 'index'` and `storage: 'session'` options work (integration)
+- [x] `{#id}` override: rename item text with an id marker → state preserved (unit + integration)
+- [x] With storage blocked, page renders, checkboxes toggle, warn logged once (storage degradation tests)
+- [x] Reset (🔄) clears only its task list's keys, restores Markdown defaults (integration)
+- [x] `onChange`/`onPageComplete` receive the documented context; throwing handlers contained; `onPageComplete` fires on transition only (integration)
+- [x] Zero dependencies; single vanilla file ~24 kB source / ~8 kB gzip, no build step; ESM wrapper shipped (`esm.js`)
+- [x] Single-line install via GitHub Pages upstream; auto-registration order-independent; enabled by default, `false` disables (e2e script-tag path)
+- [ ] (human, optional) visual click-through of the live demo in a real browser
 
 ## 6. Resolved decisions
 

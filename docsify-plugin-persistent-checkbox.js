@@ -1,5 +1,5 @@
 /*!
- * docsify-plugin-persistent-checkbox v0.2.0
+ * docsify-plugin-persistent-checkbox v0.3.0
  * Persistent, per-page checkbox state for Docsify 5 task lists.
  * Exercises, self-validation, progress tracking.
  *
@@ -691,7 +691,7 @@
    * ------------------------------------------------------------------ */
 
   persistentCheckbox.normalizeConfig = normalizeConfig;
-  persistentCheckbox.version = '0.2.0';
+  persistentCheckbox.version = '0.3.0';
   persistentCheckbox._internals = {
     // keys
     fnv1a32: fnv1a32,
